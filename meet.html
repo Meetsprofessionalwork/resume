@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SYNDICATE | Data Operative</title>
+    
+    <!-- Fonts: Cinzel (Mafia/Classic) & Share Tech Mono (Hacker) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <!-- Fonts: Playfair Display (Editorial) & Space Mono (Data) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- GSAP for Professional Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --paper: #e3e3e3; /* Dirty Cash White */
+            --ink: #050505;   /* Void Black */
+            --toxic: #00ff41; /* Cyber/Mafia Green */
+            --alert: #ff003c;
+            --tilt: -3deg;
+            
+        }
+        
+        /* --- LOCOMOTIVE SCROLL FIXES --- */
+        html.has-scroll-smooth { overflow: hidden; }
+        html.has-scroll-dragging { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .has-scroll-smooth body { overflow: hidden; }
+        .has-scroll-smooth [data-scroll-container] { min-height: 100vh; }
+
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            width: 100%;
+        }
+     
+         #cursor-ring {
+            position: fixed; width: 45px; height: 45px; border: 1.5px solid #000;
+            border-radius: 50%; pointer-events: none; z-index: 1000000;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+
+        /* --- 1. CANVAS NOISE (The Gritty Texture) --- */
+        #noise-canvas{
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: 9999; opacity: 0.08; pointer-events: none; mix-blend-mode: multiply;
+        }
+    
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Cinzel', serif; text-transform: uppercase; font-weight: 900; }
+        
+        .mega-text {
+            font-size: 10vw; line-height: 0.8; letter-spacing: -5px;
+            color: transparent; -webkit-text-stroke: 2px var(--ink);
+            position: relative; z-index: 2; mix-blend-mode: exclusion;
+        }
+
+        .highlight-green {
+            background: var(--toxic); color: var(--ink);
+            padding: 0 10px; display: inline-block;
+            transform: skewX(-10deg);
+            -webkit-text-stroke: 0;
+        }
+
+        /* --- THE "SPELL" EFFECT CLASS --- */
+        .decode-text { display: inline-block; min-width: 50px; }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .skew-wrapper {
+            transform: skewY(var(--tilt));
+            transform-origin: center;
+            will-change: transform;
+        }
+        
+        .section-container {
+            padding: 100px 5%;
+            border-bottom: 2px solid var(--ink);
+            position: relative;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden;
+            border-bottom: 5px solid var(--ink);
+        }
+        
+        .video-bg {
+            position: absolute; top: 20%; right: -10%; width: 60%; height: 60%;
+            object-fit: cover; opacity: 0.8; filter: grayscale(100%) contrast(1.2);
+            z-index: 1; mask-image: linear-gradient(to bottom, black, transparent);
+            transform: skewY(3deg); /* Counter tilt */
+        }
+
+        /* --- THE "ADS" (Skills Newsletter) --- */
+        .ad-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 2px; background: var(--ink); /* Borders */
+            margin-top: 50px; border: 2px solid var(--ink);
+        }
+        .ad-box {
+            background: var(--paper); padding: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 200px; transition: 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .ad-box:hover { background: var(--alert); color: var(--toxic); }
+        .ad-badge {
+            position: absolute; top: 10px; right: 10px;
+            border: 1px solid currentColor; border-radius: 50%;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; transform: rotate(15deg);
+        }
+
+        /* --- ZIGZAG PROJECTS (The Evidence) --- */
+        .zigzag-item {
+            display: flex; gap: 50px; margin-bottom: 100px; align-items: center;
+        }
+        .zigzag-item:nth-child(even) { flex-direction: row-reverse; }
+        
+        .evidence-img-wrap {
+            flex: 1; position: relative; height: 400px;
+            border: 2px solid var(--ink);
+        }
+        .evidence-img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(100%); transition: 0.5s;
+        }
+        .evidence-img-wrap:hover .evidence-img { filter: grayscale(0%) sepia(50%) hue-rotate(90deg); }
+        
+        .evidence-text { flex: 1; }
+        .evidence-label {
+            background: var(--ink); color: var(--paper); padding: 5px 10px;
+            font-size: 0.8rem; display: inline-block; margin-bottom: 10px;
+        }
+
+        /* --- BUTTONS (Built-in Nav) --- */
+        .action-btn {
+            background: transparent; border: 2px solid var(--ink);
+            padding: 15px 40px; font-family: 'Share Tech Mono';
+            font-size: 1.2rem; text-transform: uppercase;
+            cursor: pointer; transition: 0.3s; position: relative;
+            overflow: hidden; display: inline-block; margin-top: 20px;
+            text-decoration: none; color: var(--ink);
+        }
+        .action-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--toxic); transition: 0.3s; z-index: -1;
+        }
+        .action-btn:hover::before { left: 0; }
+        .action-btn:hover { border-color: var(--toxic); }
+
+        /* --- TICKER (Certificates) --- */
+        .ticker-tape {
+            background: var(--toxic); color: var(--ink);
+            padding: 15px 0; overflow: hidden; white-space: nowrap;
+            border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+            transform: rotate(-2deg) scale(1.1); margin: 50px 0;
+        }
+        .ticker-content { display: inline-block; animation: loop 15s linear infinite; font-weight: bold; font-size: 1.5rem; }
+        @keyframes loop { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+ 
+/* --- BACKGROUND CANVAS (Digital Grain) --- */
+        #grain-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: -1; opacity: 0.15; pointer-events: none;
+        }
+
+        /* --- LAYOUT: THE MAGAZINE GRID --- */
+        .magazine-wrapper {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2px;
+            background: var(--ink); /* Creates lines between cells */
+            border: 2px solid var(--ink);
+            margin: 20px;
+        }
+
+        .cell {
+            background: var(--paper);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+        
+        .masthead {
+            font-size: 8vw; line-height: 0.8; text-transform: uppercase;
+            text-align: center; border-bottom: 5px double var(--ink);
+            padding: 20px 0; margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .scramble-text {
+            display: inline-block;
+            min-width: 2ch;
+        }
+
+        /* --- SECTION 1: HEADER --- */
+        .header-section { grid-column: span 12; padding: 60px 20px; text-align: center; }
+        .date-line { 
+            display: flex; justify-content: space-between; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); 
+            padding: 10px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* --- SECTION 2: EDITORIAL (About) --- */
+        .editorial { grid-column: span 8; }
+        .drop-cap { float: left; font-size: 5rem; line-height: 0.8; font-family: 'Playfair Display'; margin-right: 10px; color: var(--highlight); }
+        .article-text { font-size: 1.1rem; line-height: 1.8; text-align: justify; }
+
+        /* --- SECTION 3: THE "ADS" (Skills) --- */
+        .ad-space {
+            grid-column: span 4;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-left: 2px solid var(--ink);
+            background: #e6e6e6;
+            text-align: center;
+        }
+        .ad-box {
+            border: 2px dashed var(--ink);
+            padding: 20px; margin: 20px;
+            transform: rotate(-2deg);
+            transition: 0.3s;
+        }
+        .ad-box:hover { transform: rotate(0deg) scale(1.05); background: var(--alert); color: white; }
+        .ad-tag { font-size: 0.7rem; text-transform: uppercase; border-bottom: 1px solid currentColor; margin-bottom: 10px; display: inline-block;}
+
+        /* --- SECTION 4: FEATURE STORY (Projects) --- */
+        .feature-img-container { grid-column: span 7; height: 60vh; padding: 0; }
+        .feature-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
+        .feature-img:hover { filter: grayscale(0%); }
+        
+        .feature-text { grid-column: span 5; display: flex; flex-direction: column; justify-content: center; }
+        .project-title { font-size: 3rem; margin-bottom: 20px; line-height: 1; }
+        .btn-read {
+            margin-top: 30px; padding: 15px 30px; border: 1px solid var(--ink);
+            background: transparent; font-family: 'Space Mono'; text-transform: uppercase;
+            cursor: pointer; transition: 0.3s; width: max-content;
+        }
+        .btn-read:hover { background: var(--ink); color: white; }
+
+        /* --- SECTION 5: THE TICKER (Certificates) --- */
+        .ticker-wrap {
+            grid-column: span 12;
+            background: var(--ink); color: var(--paper);
+            overflow: hidden; white-space: nowrap; padding: 15px 0;
+        }
+        .ticker { display: inline-block; animation: marquee 20s linear infinite; font-size: 1.5rem; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- SECTION 6: CLASSIFIEDS (Contact) --- */
+        .classifieds { grid-column: span 12; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; background: var(--ink); }
+        .classified-item { background: var(--paper); padding: 30px; text-align: center; transition: 0.3s; }
+        .classified-item:hover { background: var(--alert); color: white; }
+
+         /* --- CERTIFICATES --- */
+        .cert-archive-section { padding: 100px 5%; background: var(--paper); }
+        .huge-word { font-size: 8vw; line-height: 1; }
+        .cert-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2px; background: var(--ink); border: 2px solid var(--ink); }
+        .cert-item { background: var(--paper); padding: 20px; cursor: pointer; transition: 0.3s; filter: grayscale(1); }
+        .cert-item:hover { filter: grayscale(0); background: #fff; transform: translateY(-5px); }
+        
+        /* --- MODAL --- */
+        #cert-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; justify-content: center; align-items: center; z-index: 99999;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #cert-overlay.active { opacity: 1; pointer-events: auto; }
+        .passport-container { width: min(90vw, 450px); background: var(--paper); position: relative; padding: 20px; border-radius: 4px; }
+        .passport-photo { width: 100%; height: 300px; background: #000; overflow: hidden; margin-bottom: 15px; }
+        .passport-photo img { width: 100%; height: 100%; object-fit: contain; }
+        .passport-close { position: absolute; top: 10px; right: 15px; font-size: 2rem; border: none; background: none; cursor: pointer; }
+
+      
+        /* ===============================
+   MINI VIDEO AD SECTION
+=============================== */
+
+.mini-video-ad{
+    max-width: 1100px;
+    margin: 120px auto;
+    padding: 40px;
+    border: 2px solid #111;
+    font-family: 'Playfair Display', serif;
+}
+
+/* HEADER */
+.mini-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 30px;
+}
+
+.mini-header span{
+    font-size: 0.7rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    opacity: .6;
+}
+
+.mini-header h3{
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+}
+
+/* GRID */
+.mini-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* VIDEO CARD */
+.mini-video{
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    border: 1.5px solid #111;
+    background: #111;
+    cursor: pointer;
+}
+
+/* VIDEO */
+.mini-video video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: transform .5s ease, filter .5s ease;
+}
+
+/* OVERLAY */
+.mini-overlay{
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,.7), transparent);
+    color: #f4f1ec;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+
+.mini-overlay span{
+    font-size: 0.65rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.mini-overlay h4{
+    font-size: 1.2rem;
+    margin-top: 6px;
+}
+
+/* HOVER */
+.mini-video:hover video{
+    transform: scale(1.08);
+    filter: grayscale(0);
+}
+
+.mini-video:hover .mini-overlay{
+    opacity: 1;
+}
+
+/* ===============================
+   MICRO ANIMATION
+=============================== */
+
+.mini-video{
+    transform: translateY(20px);
+    opacity: 0;
+    animation: miniReveal .8s ease forwards;
+}
+
+.mini-video:nth-child(2){
+    animation-delay: .15s;
+}
+
+@keyframes miniReveal{
+    to{
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+
+@media(max-width: 700px){
+    
+
+  /* ---------- GLOBAL RESET ---------- */
+  html, body {
+    overflow-x: hidden !important;
+    background: var(--paper);
+  }
+
+    .mini-grid{
+        grid-template-columns: 1fr;
+    }
+
+    .mini-video{
+        height: 200px;
+    }
+}
+
+        
+        /* ===============================
+   SOCIAL RAIL — SIGNATURE STYLE
+=============================== */
+
+.social-rail{
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 42px;
+    position: relative;
+}
+
+/* The thin editorial rail */
+.social-rail::after{
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--ink),
+        transparent
+    );
+    opacity: 0.6;
+}
+
+/* Links */
+.social-rail a{
+    color: var(--ink);
+    font-size: 1.8rem;
+    text-decoration: none;
+    position: relative;
+    transform: translateY(0);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0.6;
+}
+
+/* Icon hover rise */
+.social-rail a:hover{
+    transform: translateY(-10px);
+    opacity: 1;
+}
+
+/* Minimal underline reveal */
+.social-rail a::after{
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: 0;
+    height: 2px;
+    background: var(--ink);
+    transform: translateX(-50%);
+    transition: width 0.4s ease;
+}
+
+.social-rail a:hover::after{
+    width: 100%;
+}
+
+/* ===============================
+   MOBILE REFINEMENT
+=============================== */
+
+@media (max-width: 768px){
+    .social-rail{
+        gap: 28px;
+    }
+
+    .social-rail a{
+        font-size: 1.5rem;
+    }
+
+    .social-rail::after{
+        width: 80%;
+    }
+}
+/* ===============================
+   CONTRACT SECTION
+=============================== */
+
+.contract-section{
+    text-align: center;
+    padding: 120px 5%;
+    position: relative;
+}
+
+.contract-title{
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    margin-bottom: 10px;
+}
+
+.contract-subtitle{
+    opacity: 0.7;
+    margin-bottom: 40px;
+}
+
+/* ===============================
+   TERMINAL BOX (NEW DIV)
+=============================== */
+
+.contract-terminal{
+    max-width: 520px;
+    margin: 0 auto;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    text-align: left;
+}
+
+/* Fake terminal header */
+.terminal-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--ink);
+    background: #e0e0e0;
+}
+
+.terminal-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--alert);
+}
+
+/* ===============================
+   FORM
+=============================== */
+
+.contract-form{
+    padding: 25px;
+}
+
+.contract-form label{
+    display: block;
+    margin-bottom: 25px;
+}
+
+.contract-form span{
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+/* Inputs */
+.contract-form input{
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 2px solid var(--ink);
+    background: transparent;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+}
+
+.contract-form input::placeholder{
+    opacity: 0.4;
+}
+
+.contract-form input:focus{
+    border-bottom-color: var(--toxic);
+}
+
+/* Button refinement */
+.contract-btn{
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+/* ===============================
+   MOBILE TUNING
+=============================== */
+
+@media (max-width: 768px){
+    .cursor-ring{
+        display:none;}
+    .contract-terminal{
+        max-width: 100%;
+    }
+
+    .contract-form{
+        padding: 20px;
+    }
+}
+
+
+/* ===============================
+   VIDEO ALBUM – NEWSPAPER STYLE
+=============================== */
+
+.video-album{
+    padding: 120px 8%;
+    font-family: 'Playfair Display', serif;
+}
+
+/* HEADER */
+.album-header{
+    max-width: 600px;
+    margin-bottom: 80px;
+}
+
+.section-tag{
+    font-size: 0.75rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    opacity: .6;
+}
+
+.album-header h2{
+    font-size: clamp(3rem,5vw,4rem);
+    line-height: 1;
+    margin: 16px 0;
+}
+
+.album-header p{
+    opacity: .8;
+}
+
+/* GRID */
+.album-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 280px;
+    gap: 28px;
+}
+
+/* ITEMS */
+.album-item{
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #111;
+    background: #111;
+    cursor: pointer;
+    transform: translateY(40px);
+    opacity: 0;
+    animation: reveal 1s ease forwards;
+}
+
+.album-item.large{
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.album-item.wide{
+    grid-column: span 2;
+}
+
+/* VIDEO */
+.album-item video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: transform .6s ease, filter .6s ease;
+}
+
+/* OVERLAY */
+.ad-overlay{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.8), transparent);
+    color: #f2efe9;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+.ad-label{
+    font-size: 0.7rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: .7;
+}
+
+.ad-overlay h3{
+    font-size: 1.4rem;
+}
+
+/* HOVER EFFECTS */
+.album-item:hover video{
+    transform: scale(1.08);
+    filter: grayscale(0);
+}
+
+.album-item:hover .ad-overlay{
+    opacity: 1;
+}
+
+/* ===============================
+   ANIMATIONS
+=============================== */
+
+@keyframes reveal{
+    to{
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+
+@media(max-width: 900px){
+    .album-grid{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 500px){
+    .album-grid{
+        grid-template-columns: 1fr;
+    }
+
+    .album-item.large,
+    .album-item.wide{
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+}
+.album-item:nth-child(1){animation-delay:.1s}
+.album-item:nth-child(2){animation-delay:.2s}
+.album-item:nth-child(3){animation-delay:.3s}
+.album-item:nth-child(4){animation-delay:.4s}
+.album-item::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("https://www.transparenttextures.com/patterns/newsprint.png");
+    mix-blend-mode:multiply;
+    opacity:.2;
+    pointer-events:none;
+}
+
+
+        /* --- MOBILE --- */
+        @media (max-width: 900px) {
+            .magazine-wrapper { display: flex; flex-direction: column; border: none; margin: 0; }
+            .magazine-wrapper > div { border-bottom: 2px solid var(--ink); }
+            .masthead { font-size: 15vw; }
+            .classifieds { display: flex; flex-direction: column; }
+        }
+
+        /* --- WORD SPELL EFFECT --- */
+        .spell-word { position: relative; display: inline-block; color: var(--highlight); }
+
+        /* --- MOBILE --- */
+        @media (max-width: 768px) {
+            .cursor-ring{
+                display: none;
+            }
+            .mega-text { font-size: 18vw; }
+            .ad-grid { grid-template-columns: 1fr; }
+            .zigzag-item { flex-direction: column !important; }
+            .video-bg { width: 100%; right: 0; opacity: 0.3; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Grain Overlay -->
+    <canvas id="noise-canvas"></canvas>
+     <canvas id="grain-canvas"></canvas>
+    <div id="cursor-ring"></div>
+    <div class="skew-wrapper">
+        
+        <!-- HERO SECTION -->
+        <section class="hero section-container">
+            <!-- Background Video (Abstract/City) -->
+            <video class="video-bg" autoplay muted loop playsinline>
+                <source src="video/1.mp4" type="video/mp4">
+            </video>
+
+            <div style="z-index: 2;">
+                <p>CONFIDENTIAL DOSSIER // <span class="decode-text" data-target="DATA SCIENTIST">X89-A</span></p>
+                <h1 class="mega-text">THE<br><span class="highlight-green">SYNDICATE</span></h1>
+                <p style="max-width: 500px; margin-top: 20px; background: white; padding: 10px; border: 1px solid black;">
+                    I architect the underworld of data. Turning chaos into structured intelligence. 
+                    <br><strong>Location:</strong> 
+                </p>
+                
+                <!-- Internal Page Nav Buttons -->
+                <div style="margin-top: 40px;">
+                    <button class="action-btn" onclick="scrollToSec('.ads')">Inspect Skills</button>
+                    <button class="action-btn" onclick="scrollToSec('.projects')">Evidence</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADS SECTION (Skills) -->
+        <section class="ads section-container">
+            <h2 style="font-size: 3rem;">CLASSIFIEDS <span style="font-size:1rem;">(SKILLS)</span></h2>
+            
+            <div class="ad-grid">
+                <!-- Ad 1 -->
+                <div class="ad-box">
+                    <div class="ad-badge">HOT</div>
+                    <h3>CLEANER WANTED</h3>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Messy Data? We use <strong>PYTHON PANDAS</strong> to scrub it clean.</p>
+                    <br>
+                    <strong>$ HIRE NOW</strong>
+                </div>
+                <!-- Ad 2 -->
+                <div class="ad-box">
+                    <div class="ad-badge">NEW</div>
+                    <h3>PREDICT FUTURE</h3>
+                    <p style="font-size: 0.9rem; margin-top: 10px;"><strong>MACHINE LEARNING</strong> models available. See tomorrow, today.</p>
+                    <br>
+                    <strong>$ INQUIRE</strong>
+                </div>
+                <!-- Ad 3 -->
+                <div class="ad-box">
+                    <h3>VISUAL INTEL</h3>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Dashboards by <strong>TABLEAU</strong>. Don't fly blind.</p>
+                </div>
+                <!-- Ad 4 -->
+                <div class="ad-box">
+                    <div class="ad-badge">SALE</div>
+                    <h3>DB ADMIN</h3>
+                    <p style="font-size: 0.9rem; margin-top: 10px;"><strong>SQL</strong> Architecture. Structured & Secure.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TICKER TAPE (Certificates) -->
+        <div class="ticker-tape">
+            <div class="ticker-content">
+                // VERIFIED: IBM DATA SCIENCE PROFESSIONAL // GOOGLE ANALYTICS CERTIFIED // AWS CLOUD ARCHITECT // STANFORD MACHINE LEARNING // DEEPLEARNING.AI // 
+                // VERIFIED: IBM DATA SCIENCE PROFESSIONAL // GOOGLE ANALYTICS CERTIFIED // AWS CLOUD ARCHITECT // STANFORD MACHINE LEARNING // DEEPLEARNING.AI // 
+            </div>
+        </div>
+
+        
+        <!-- PROJECTS SECTION (Evidence) -->
+        <section class="projects section-container">
+            <h2 style="font-size: 3rem; text-align: right; margin-bottom: 80px;">EVIDENCE BOARD</h2>
+
+            <!-- Project 1 -->
+            <div class="zigzag-item">
+                <div class="evidence-text">
+                    <span class="evidence-label">CASE #001</span>
+                    <h2 class="decode-text" data-target="MARKET PREDICTOR" style="font-size: 2.5rem; display:block;">LOADING...</h2>
+                    <p>Algorithm designed to intercept financial trends before the public knows. Uses LSTM Neural Networks.</p>
+                    <a href="#" class="action-btn" style="font-size: 0.9rem;">View Report</a>
+                </div>
+                <div class="evidence-img-wrap">
+                    <img src="image/4.webp" class="evidence-img">
+                </div>
+            </div>
+
+   <section class="video-album">
+
+    <div class="album-header">
+        <span class="section-tag">Editorial Archive</span>
+        <h2>Selected Motion Works</h2>
+        <p>Four stories. Four executions. Timeless visuals.</p>
+    </div>
+
+    <div class="album-grid">
+
+        <article class="album-item large">
+            <video autoplay muted loop playsinline>
+                <source src="video/9.mp4" type="video/mp4">
+            </video>
+            <div class="ad-overlay">
+                <span class="ad-label">Front Page</span>
+                <h3>Digital Campaign</h3>
+            </div>
+        </article>
+
+        <article class="album-item">
+            <video autoplay muted loop playsinline>
+                <source src="video/6.mp4" type="video/mp4">
+            </video>
+            <div class="ad-overlay">
+                <span class="ad-label">Editorial</span>
+                <h3>Brand Story</h3>
+            </div>
+        </article>
+
+        <article class="album-item">
+            <video autoplay muted loop playsinline>
+                <source src="video/8.mp4" type="video/mp4">
+            </video>
+            <div class="ad-overlay">
+                <span class="ad-label">Advert</span>
+                <h3>Product Launch</h3>
+            </div>
+        </article>
+
+        <article class="album-item wide">
+            <video autoplay muted loop playsinline>
+                <source src="video/4.mp4" type="video/mp4">
+            </video>
+            <div class="ad-overlay">
+                <span class="ad-label">Special Feature</span>
+                <h3>Motion Design</h3>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+
+            <!-- Project 2 -->
+            <div class="zigzag-item">
+                <div class="evidence-img-wrap">
+                    <img src="image/1.webp" class="evidence-img">
+                </div>
+                <div class="evidence-text">
+                    <span class="evidence-label">CASE #002</span>
+                    <h2 class="decode-text" data-target="TRAFFIC ANALYZER" style="font-size: 2.5rem; display:block;">LOADING...</h2>
+                    <p>Real-time surveillance dashboard. Tracking user behavior and anomalies using Python & SQL.</p>
+                    <a href="#" class="action-btn" style="font-size: 0.9rem;">Open File</a>
+                </div>
+            </div>
+
+        </section>
+          <!-- 1. Interactive Grain Canvas -->
+    <canvas id="grain-canvas"></canvas>
+
+    <div class="magazine-wrapper">
+        
+       
+
+        <!-- ABOUT ME (Editorial) -->
+        <div class="cell editorial">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Letter from the Editor</h2>
+            <div class="article-text">
+                <span class="drop-cap">I</span>
+                am a Computer Science student obsessed with the narrative hidden inside data. While others see chaos, I see patterns. 
+                <br><br>
+                This portfolio is not a list; it is a collection of stories told through <span class="spell-word" data-value="Python">Python</span>, 
+                <span class="spell-word" data-value="Neural Networks">Neural Networks</span>, and design. I bridge the gap between backend logic and artistic expression.
+                Currently researching AI at University.
+            </div>
+        </div>
+
+        <!-- ADVERTISEMENTS (Skills) -->
+        <div class="cell ad-space">
+            <div class="ad-tag">SPONSORED CONTENT</div>
+            
+            <div class="ad-box">
+                <h3>NEED SPEED?</h3>
+                <p>Try <strong>PYTHON</strong> today.</p>
+                <small>Now with Pandas & NumPy support.</small>
+            </div>
+
+            <div class="ad-box">
+                <h3>LOST DATA?</h3>
+                <p>We found it with <strong>SQL</strong>.</p>
+                <small>Querying reality since 1974.</small>
+            </div>
+
+            <div class="ad-box">
+                <h3>LOOKING GOOD?</h3>
+                <p>Visuals by <strong>TABLEAU</strong>.</p>
+            </div>
+        </div>
+
+
+
+
+        <!-- PROJECT 1 -->
+        <div class="cell feature-img-container">
+            <img src="image/3.webp" class="feature-img">
+        </div>
+        <div class="cell feature-text">
+            <div class="ad-tag">FEATURE STORY</div>
+            <h2 class="project-title">The Market<br>Oracle</h2>
+            <p>An Artificial Intelligence designed to predict stock market fluctuations using LSTM Neural Networks. 85% Accuracy achieved in testing.</p>
+            <button class="btn-read" onclick="window.location.href='#'">Read Full Report</button>
+        </div>
+
+        <!-- PROJECT 2 (Reversed for visual interest) -->
+        <div class="cell feature-text">
+            <div class="ad-tag">INVESTIGATION</div>
+            <h2 class="project-title">The Invisible<br>Network</h2>
+            <p>Cybersecurity analysis tool detecting anomalies in real-time server traffic. Built with Python and darker shades of logic.</p>
+            <button class="btn-read" onclick="window.location.href='#'">Access Data</button>
+        </div>
+        <div class="cell feature-img-container">
+            <img src="image/2.webp" class="feature-img">
+        </div>
+
+
+
+
+        <!-- TICKER (Certificates) -->
+        <div class="ticker-wrap">
+            <div class="ticker">
+                +++ LATEST CERTIFICATIONS +++ IBM DATA SCIENCE PROFESSIONAL +++ GOOGLE ANALYTICS ADVANCED +++ AWS CLOUD PRACTITIONER +++ STANFORD MACHINE LEARNING +++ DEEPLEARNING.AI NEURAL NETWORKS +++ 9 CERTIFICATES VERIFIED +++ HIRE IMMEDIATELY +++ 
+            </div>
+        </div>
+
+        
+
+        <!-- CLASSIFIEDS (Contact) -->
+        <div class="classifieds">
+            <div class="classified-item">
+                <h3>HELP WANTED</h3>
+                <p>Looking for a Data Scientist? <br>Inquire Within.</p>
+                <br>
+                <button class="btn-read">Apply Now</button>
+            </div>
+            <div class="classified-item">
+                <h3>LOST & FOUND</h3>
+                <p>Found: Passion for Code.<br>Lost: Sleep.</p>
+                <br>
+                <a href="#">@github_handle</a>
+            </div>
+            <div class="classified-item">
+                <h3>PERSONAL</h3>
+                <p>Seeking complex datasets for long walks on the beach.</p>
+                <br>
+                <a href="mailto:email@edu.com">Send Email</a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <section class="mini-video-ad">
+
+    <div class="mini-header">
+        <span>Featured Advert</span>
+        <h3>Motion Highlights</h3>
+    </div>
+
+    <div class="mini-grid">
+
+        <article class="mini-video">
+            <video autoplay muted loop playsinline>
+                <source src="video/11.mp4" type="video/mp4">
+            </video>
+            <div class="mini-overlay">
+                <span>Editorial</span>
+                <h4>Brand Story</h4>
+            </div>
+        </article>
+
+        <article class="mini-video">
+            <video autoplay muted loop playsinline>
+                <source src="video/5.mp4" type="video/mp4">
+            </video>
+            <div class="mini-overlay">
+                <span>Advert</span>
+                <h4>Visual Campaign</h4>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+
+
+
+ <!-- REGISTRY -->
+        <section class="cert-archive-section">
+            <div class="cert-header">
+                <h2 class="huge-word">THE REGISTRY</h2>
+                <p>OFFICIAL RECORD OF COMPETENCE</p>
+            </div>
+            <div class="cert-grid">
+                <div class="cert-item" data-img="image/DS.jpeg" data-title="Data Science" data-issuer="HP/OFFICIAL HP">
+                    <span class="ref-no">Certificate</span>
+                    <h4>Data Science</h4>
+                    <span class="issuer">OFFICIAL_HP </span>
+                </div>
+                <div class="cert-item" data-img="image/DS.jpeg" data-title="AI-BEGINNER" data-issuer="HP/OFFICIAL HP">
+                    <span class="ref-no">Certificate</span>
+                    <h4>AI for Beginners </h4>
+                    <span class="issuer">OFFICIAL_HP Life</span>
+                </div>
+                <div class="cert-item" data-img="image/NJ.jpeg" data-title="NJ-FLAP" data-issuer="NJ_GROUP">
+                    <span class="ref-no">Certificate</span>
+                    <h4>Financial Literacy Awareness Program</h4>
+                    <span class="issuer">NJ-GROUP</span>
+                </div>
+            </div>
+        </section>
+
+ 
+
+
+       
+       <!-- CONTACT (The Contract) -->
+<section class="section-container contract-section">
+    <h2 class="contract-title">SIGN THE CONTRACT</h2>
+    <p class="contract-subtitle">Are you in or out?</p>
+
+    <div class="contract-terminal">
+        <div class="terminal-header">
+            <span>SECURE TRANSMISSION</span>
+            <span class="terminal-dot"></span>
+        </div>
+
+        <form class="contract-form">
+            <label>
+                <span>CODENAME</span>
+                <input type="text" name="codename" placeholder="ENTER ALIAS" required>
+            </label>
+
+            <label>
+                <span>SECURE CHANNEL</span>
+               <input type="email" name="email" placeholder="ENCRYPTED EMAIL" required>
+            </label>
+
+            <button type="submit" class="action-btn contract-btn">
+                TRANSMIT
+            </button>
+        </form>
+    </div>
+    
+  
+
+
+
+            
+       <div class="social-rail">
+    <a href="https://github.com/Meetsprofessionalwork"><i class="fab fa-github"></i></a>
+    <a href="https://www.instagram.com/oxydavee?igsh=Z2wwZjl4dm1rbThj"><i class="fab fa-instagram"></i></a>
+    <a href="https://x.com/meet_dave97618"><i class="fab fa-twitter"></i></a>
+    <a href="mailto:meetsprofessionalwork@gmail.com?subject=SAYING%20%F0%9F%91%8B%F0%9F%91%8B%20HELLO&body=I%20am%20from%20website%20nice%20to%20meet%20you...."><i class="fas fa-envelope"></i></a>
+</div>
+
+        </section>
+
+    </div>
+  
+    <!-- MODAL -->
+    <div id="cert-overlay">
+        <div class="passport-container">
+            <button class="passport-close">×</button>
+            <div class="passport-photo"><img src="" id="cert-img"></div>
+            <div class="passport-details">
+                <h5 id="cert-title" style="font-family: 'Cinzel';"></h5>
+                <p id="cert-issuer" style="font-style: italic; opacity: 0.7;"></p>
+            </div>
+        </div>
+    </div>
+
+   
+       <script>
+            // --- 1. Cursor Engine ---
+        const dot = document.querySelector("#cursor-dot");
+        const ring = document.querySelector("#cursor-ring");
+
+        window.addEventListener("mousemove", (e) => {
+            gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0 });
+            gsap.to(ring, { x: e.clientX - 22, y: e.clientY - 22, duration: 0.2 });
+        });
+
+        document.querySelectorAll("a, .gallery-item, video, h1").forEach(el => {
+            el.addEventListener("mouseenter", () => gsap.to(ring, { scale: 2, background: "rgba(0,0,0,0.05)" }));
+            el.addEventListener("mouseleave", () => gsap.to(ring, { scale: 1, background: "transparent" }));
+        });
+
+/* =====================================================
+   GLOBAL SAFE INIT
+===================================================== */
+(() => {
+
+  /* ===============================
+     GSAP SETUP
+  =============================== */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ===============================
+     SMOOTH SCROLL
+  =============================== */
+  window.scrollToSec = (selector) => {
+    const el = document.querySelector(selector);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  /* ===============================
+     WORD SPELL (HOVER EFFECT)
+  =============================== */
+  const spellLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
+
+  document.querySelectorAll(".spell-word").forEach(el => {
+    const original = el.dataset.value;
+    el.textContent = original;
+
+    el.addEventListener("mouseenter", () => {
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent = original
+          .split("")
+          .map((char, idx) =>
+            idx < i ? original[idx] : spellLetters[Math.floor(Math.random() * spellLetters.length)]
+          )
+          .join("");
+
+        if (i >= original.length) clearInterval(interval);
+        i += 0.4;
+      }, 30);
+    });
+  });
+
+  /* ===============================
+     DECODE TEXT (SCROLL + HOVER)
+  =============================== */
+  const decodeLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890#@&";
+
+  function runDecoder(el) {
+    const target = el.dataset.target || el.textContent;
+    let i = 0;
+
+    const interval = setInterval(() => {
+      el.textContent = target
+        .split("")
+        .map((char, idx) =>
+          idx < i ? target[idx] : decodeLetters[Math.floor(Math.random() * decodeLetters.length)]
+        )
+        .join("");
+
+      if (i >= target.length) clearInterval(interval);
+      i += 0.5;
+    }, 30);
+  }
+
+  document.querySelectorAll(".decode-text").forEach(el => {
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 80%",
+      onEnter: () => runDecoder(el)
+    });
+
+    el.addEventListener("mouseenter", () => runDecoder(el));
+  });
+
+// 5. Certificate Modal Logic
+        const overlay = document.getElementById("cert-overlay");
+        document.querySelectorAll(".cert-item").forEach(item => {
+            item.addEventListener("click", () => {
+                document.getElementById("cert-img").src = item.dataset.img;
+                document.getElementById("cert-title").textContent = item.dataset.title;
+                document.getElementById("cert-issuer").textContent = item.dataset.issuer;
+                overlay.classList.add("active");
+            });
+        });
+
+        document.querySelector(".passport-close").addEventListener("click", () => overlay.classList.remove("active"));
+        overlay.addEventListener("click", (e) => { if(e.target === overlay) overlay.classList.remove("active"); });
+
+  /* ===============================
+     GRAIN CANVAS (BACKGROUND)
+  =============================== */
+  const grainCanvas = document.getElementById("grain-canvas");
+  if (grainCanvas) {
+    const gctx = grainCanvas.getContext("2d");
+
+    function resizeGrain() {
+      grainCanvas.width = window.innerWidth;
+      grainCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeGrain);
+    resizeGrain();
+
+    function drawGrain() {
+      const img = gctx.createImageData(grainCanvas.width, grainCanvas.height);
+      const buffer = new Uint32Array(img.data.buffer);
+
+      for (let i = 0; i < buffer.length; i++) {
+        if (Math.random() < 0.05) buffer[i] = 0xff000000;
+      }
+
+      gctx.putImageData(img, 0, 0);
+      requestAnimationFrame(drawGrain);
+    }
+    drawGrain();
+  }
+
+  /* ===============================
+     NOISE CANVAS (OVERLAY)
+  =============================== */
+  const noiseCanvas = document.getElementById("noise-canvas");
+  if (noiseCanvas) {
+    const nctx = noiseCanvas.getContext("2d");
+
+    function resizeNoise() {
+      noiseCanvas.width = window.innerWidth;
+      noiseCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeNoise);
+    resizeNoise();
+
+    function drawNoise() {
+      const img = nctx.createImageData(noiseCanvas.width, noiseCanvas.height);
+      const buffer = new Uint32Array(img.data.buffer);
+
+      for (let i = 0; i < buffer.length; i++) {
+        if (Math.random() < 0.1) buffer[i] = 0xff000000;
+      }
+
+      nctx.putImageData(img, 0, 0);
+      requestAnimationFrame(drawNoise);
+    }
+    drawNoise();
+  }
+
+  /* ===============================
+     GSAP ANIMATIONS
+  =============================== */
+
+  // Ad boxes
+  gsap.utils.toArray(".ad-box").forEach(box => {
+    gsap.from(box, {
+      scrollTrigger: {
+        trigger: box,
+        start: "top 80%"
+      },
+      y: 100,
+      opacity: 0,
+      rotation: 10,
+      duration: 0.8,
+      ease: "back.out(1.7)"
+    });
+  });
+
+  // Article text
+  gsap.from(".article-text", {
+    scrollTrigger: {
+      trigger: ".article-text",
+      start: "top 85%"
+    },
+    y: 50,
+    opacity: 0,
+    duration: 1
+  });
+
+  // Feature images
+  gsap.utils.toArray(".feature-img").forEach(img => {
+    gsap.from(img, {
+      scrollTrigger: {
+        trigger: img,
+        start: "top 70%"
+      },
+      scale: 1.2,
+      duration: 1.5,
+      ease: "power2.out"
+    });
+  });
+
+  /* ===============================
+     SCROLL SKEW EFFECT
+  =============================== */
+  const proxy = { skew: 0 };
+  const skewSetter = gsap.quickSetter(".skew-wrapper", "skewY", "deg");
+  const clamp = gsap.utils.clamp(-5, 5);
+
+  ScrollTrigger.create({
+    onUpdate(self) {
+      const skew = clamp(self.getVelocity() / -300);
+      if (Math.abs(skew) > Math.abs(proxy.skew)) {
+        proxy.skew = skew;
+        gsap.to(proxy, {
+          skew: 0,
+          duration: 0.8,
+          ease: "power3",
+          overwrite: true,
+          onUpdate: () => skewSetter(proxy.skew - 3)
+        });
+      }
+    }
+  });
+const isLowPower = window.matchMedia("(max-width: 768px)").matches;
+
+function optimizedNoise(canvas, density = 0.06) {
+  if (!canvas || isLowPower) return;
+
+  const ctx = canvas.getContext("2d");
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function draw() {
+    const img = ctx.createImageData(canvas.width, canvas.height);
+    const buffer = new Uint32Array(img.data.buffer);
+
+    for (let i = 0; i < buffer.length; i++) {
+      if (Math.random() < density) buffer[i] = 0xff000000;
+    }
+
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+optimizedNoise(document.getElementById("grain-canvas"), 0.03);
+optimizedNoise(document.getElementById("noise-canvas"), 0.05);
+
+})();
+(() => {
+  const overlay = document.getElementById("cert-overlay");
+  const img = document.getElementById("cert-img");
+  const title = document.getElementById("cert-title");
+  const issuer = document.getElementById("cert-issuer");
+
+  document.querySelectorAll(".cert-item").forEach(item => {
+    item.addEventListener("click", () => {
+      img.src = item.dataset.img;
+      title.textContent = item.dataset.title;
+      issuer.textContent = item.dataset.issuer;
+
+      overlay.classList.add("active");
+      document.body.style.overflow = "hidden"; // 🔒 LOCK PAGE
+    });
+  });
+
+  function closeModal(){
+    overlay.classList.remove("active");
+    img.src = "";
+    document.body.style.overflow = ""; // 🔓 UNLOCK PAGE
+  }
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay || e.target.classList.contains("passport-close")) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeModal();
+  });
+})();
+
+
+
+
+(() => {
+  const content = document.querySelector(".video-content");
+
+  // fade-in on load
+  window.addEventListener("load", () => {
+    content.style.opacity = "0";
+    content.style.transform = "translateY(20px)";
+
+    requestAnimationFrame(() => {
+      content.style.transition = "0.8s ease";
+      content.style.opacity = "1";
+      content.style.transform = "translateY(0)";
+    });
+  });
+})();
+
+
+(() => {
+  const ad = document.querySelector(".inline-ad-video");
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        ad.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.4 });
+
+  observer.observe(ad);
+})();
+ // 6. Noise Canvas
+        function initNoise(id, density) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext("2d");
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener("resize", resize); resize();
+            function draw() {
+                const img = ctx.createImageData(canvas.width, canvas.height);
+                const buffer = new Uint32Array(img.data.buffer);
+                for (let i = 0; i < buffer.length; i++) if (Math.random() < density) buffer[i] = 0xff000000;
+                ctx.putImageData(img, 0, 0);
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        initNoise("noise-canvas", 0.05);
+        initNoise("grain-canvas", 0.02);
+
+     
+const form = document.querySelector(".contract-form");
+
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const codename = form.querySelector('input[name="codename"]').value;
+    const email = form.querySelector('input[name="email"]').value;
+
+    fetch("PASTE_YOUR_WEB_APP_URL_HERE", {
+        method: "POST",
+        body: JSON.stringify({
+            codename: codename,
+            email: email
+        })
+    })
+    .then(() => {
+        alert("TRANSMISSION SAVED ✔");
+        form.reset();
+    })
+    .catch(() => {
+        alert("TRANSMISSION FAILED ❌");
+    });
+});
+</script>
+
+
+
+
+</body>
+</html>
